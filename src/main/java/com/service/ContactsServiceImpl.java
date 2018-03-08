@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContactsServiceImpl implements ContactsService {
@@ -22,18 +24,39 @@ public class ContactsServiceImpl implements ContactsService {
     }
 
     @Override
-    public ContactsDto createContact(ContactsDto contacts) {
-        return contactsRepository.save();
+    public ContactsDto createContact(ContactsDto contactsDto) {
+        List<Contact> contacts = convertToEntitys(contactsDto);
+        contactsRepository.saveAll(contacts);
+        return null;
     }
 
     @Override
     public ContactsDto updateContact(String contactName, ContactsDto contacts) {
+
         return null;
     }
 
     @Override
     public ContactsDto getContactByName(String contactName) {
-        return null;
+        List<Contact> contacts = contactsRepository.findByName(contactName);
+        return convertToDto(contacts);
     }
-    
+
+
+    private List<Contact> convertToEntitys(ContactsDto contactsDto) {
+        List<Contact> contacts = new LinkedList<>();
+
+        for (String phoneNumber : contactsDto.getPhones()) {
+            contacts.add(new Contact(contactsDto.getName(), phoneNumber));
+        }
+        return contacts;
+    }
+
+    private ContactsDto convertToDto(List<Contact> contacts) {
+        List<String> phones = contacts.stream()
+                .map(Contact::getPhoneNumber)
+                .collect(Collectors.toList());
+        String name = contacts.get(0).getName();
+        return new ContactsDto(name, phones);
+    }
 }

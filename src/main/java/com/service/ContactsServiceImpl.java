@@ -19,8 +19,8 @@ public class ContactsServiceImpl implements ContactsService {
 
     //TODO group by name
     @Override
-    public List<Contact> getAll() {
-        return contactsRepository.getAll();
+    public ContactsDto getAll() {
+        return convertToDto(contactsRepository.getAll());
     }
 
     @Override

@@ -1,14 +1,11 @@
 package com.controller;
 
 import com.dto.ContactsDto;
-import com.entity.Contact;
 import com.service.ContactsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/contacts")
@@ -23,7 +20,7 @@ public class ContactsController {
     }
 
     @GetMapping
-    public List<Contact> getAllContacts() {
+    public ContactsDto getAllContacts() {
         return contactsService.getAll();
     }
 

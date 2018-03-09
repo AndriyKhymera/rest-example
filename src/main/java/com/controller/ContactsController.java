@@ -35,8 +35,11 @@ public class ContactsController {
     }
 
     @GetMapping("/{contactName}")
-    public ContactsDto getContact(@PathVariable String contactName) {
-        return contactsService.getContactByName(contactName);
+    public ResponseEntity getContact(@PathVariable String contactName) {
+        Optional<ContactsDto> contactsDto = contactsService.getContactByName(contactName);
+        if (contactsDto.isPresent()) {
+            return ResponseEntity.ok(contactsDto.get());
+        } else return ResponseEntity.ok("No contacts found");
     }
 
     @PutMapping("/{contactName}")

@@ -63,9 +63,9 @@ public class ContactsServiceImpl implements ContactsService {
     }
 
     @Override
-    public ContactsDto getContactByName(String contactName) {
+    public Optional<ContactsDto> getContactByName(String contactName) {
         List<Contact> contacts = contactsRepository.findByName(contactName);
-        return convertToDto(contacts).get();
+        return convertToDto(contacts);
     }
 
 

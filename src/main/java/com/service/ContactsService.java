@@ -13,7 +13,7 @@ public interface ContactsService {
 
     HttpStatus updateContact(String contactName, ContactsDto contacts);
 
-    ContactsDto getContactByName(String contactName);
+    Optional<ContactsDto> getContactByName(String contactName);
 
     HttpStatus deleteContactByName(String contactName);
 

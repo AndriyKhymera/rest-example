@@ -4,9 +4,9 @@ import com.dto.ContactsDto;
 import com.entity.Contact;
 import com.repository.ContactsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,5 +58,17 @@ public class ContactsServiceImpl implements ContactsService {
                 .collect(Collectors.toList());
         String name = contacts.get(0).getName();
         return new ContactsDto(name, phones);
+    }
+
+    //TODO run some tests
+    @Override
+    public HttpStatus deleteContactByName(String contactName) {
+        List<Contact> contacts = contactsRepository.findByName(contactName);
+        if (contacts.size() == 0) {
+            return HttpStatus.NOT_FOUND;
+        } else {
+            contactsRepository.deleteAll(contacts);
+            return HttpStatus.OK;
+        }
     }
 }

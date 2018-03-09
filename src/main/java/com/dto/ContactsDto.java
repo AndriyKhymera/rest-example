@@ -7,13 +7,23 @@ public class ContactsDto {
     private String name;
     private List<String> phones;
 
+    public ContactsDto() {
+    }
+
     public ContactsDto(String name, List<String> phones) {
         this.name = name;
         this.phones = phones;
     }
 
-    //getters and setters
+    @Override
+    public String toString() {
+        return "ContactsDto{" +
+                "name='" + name + '\'' +
+                ", phones=" + phones +
+                '}';
+    }
 
+    //getters and setters
     public String getName() {
         return name;
     }
@@ -29,4 +39,6 @@ public class ContactsDto {
     public void setPhones(List<String> phones) {
         this.phones = phones;
     }
+
+
 }

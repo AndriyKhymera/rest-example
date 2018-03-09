@@ -3,6 +3,8 @@ package com.service;
 import com.dto.ContactsDto;
 import com.entity.Contact;
 import com.repository.ContactsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,16 +20,19 @@ public class ContactsServiceImpl implements ContactsService {
     @Autowired
     private ContactsRepository contactsRepository;
 
+    Logger log = LoggerFactory.getLogger(this.getClass());
+
     //TODO group by name
     @Override
     public Optional<ContactsDto> getAll() {
         List<Contact> contacts = contactsRepository.findAll();
-        return convertToDto(contactsRepository.findAll());
+        return convertToDto(contacts);
     }
 
     @Override
     public ContactsDto createContact(ContactsDto contactsDto) {
         List<Contact> contacts = convertToEntity(contactsDto);
+        log.info("Saving list" + contacts);
         contacts = contactsRepository.saveAll(contacts);
         return convertToDto(contacts).get();
     }

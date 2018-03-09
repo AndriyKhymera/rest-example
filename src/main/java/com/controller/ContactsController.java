@@ -33,12 +33,13 @@ public class ContactsController {
     }
 
     @PutMapping("/{contactName}")
-    public ContactsDto updateContact(@PathVariable String contactName, @RequestBody ContactsDto contact) {
-        return contactsService.updateContact(contactName, contact);
+    public ResponseEntity updateContact(@PathVariable String contactName, @RequestBody ContactsDto contact) {
+        HttpStatus status = contactsService.updateContact(contactName, contact);
+        return ResponseEntity.status(status).build();
     }
 
     @DeleteMapping("/{contactName}")
-    public ResponseEntity<?> deleteContact(@PathVariable String contactName) {
+    public ResponseEntity deleteContact(@PathVariable String contactName) {
         HttpStatus status = contactsService.deleteContactByName(contactName);
         return ResponseEntity.status(status).build();
     }

@@ -12,7 +12,7 @@ public interface ContactsService {
 
     ContactsDto createContact(ContactsDto contacts);
 
-    ContactsDto updateContact(String contactName, ContactsDto contacts);
+    HttpStatus updateContact(String contactName, ContactsDto contacts);
 
     ContactsDto getContactByName(String contactName);
 

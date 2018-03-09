@@ -25,15 +25,34 @@ public class ContactsServiceImpl implements ContactsService {
 
     @Override
     public ContactsDto createContact(ContactsDto contactsDto) {
-        List<Contact> contacts = convertToEntitys(contactsDto);
-        contactsRepository.saveAll(contacts);
-        return null;
+        List<Contact> contacts = convertToEntity(contactsDto);
+        contacts = contactsRepository.saveAll(contacts);
+        return convertToDto(contacts);
     }
 
     @Override
-    public ContactsDto updateContact(String contactName, ContactsDto contacts) {
+    public HttpStatus updateContact(String contactName, ContactsDto contactsDto) {
+        List<Contact> currentContacts = contactsRepository.findByName(contactName);
+        if (contactsRepository == null) {
+            return HttpStatus.NOT_FOUND;
+        }
 
-        return null;
+        List<Contact> newContactsList = convertToEntity(contactsDto);
+
+        List<Contact> retainList = currentContacts.stream()
+                .filter(newContactsList::contains)
+                .collect(Collectors.toList());
+
+        //contacts to add
+        newContactsList.removeAll(retainList);
+
+        //contacts to remove
+        currentContacts.removeAll(retainList);
+
+        contactsRepository.saveAll(newContactsList);
+        contactsRepository.deleteAll(currentContacts);
+
+        return HttpStatus.OK;
     }
 
     @Override
@@ -43,7 +62,19 @@ public class ContactsServiceImpl implements ContactsService {
     }
 
 
-    private List<Contact> convertToEntitys(ContactsDto contactsDto) {
+    //TODO run some tests
+    @Override
+    public HttpStatus deleteContactByName(String contactName) {
+        List<Contact> contacts = contactsRepository.findByName(contactName);
+        if (contacts == null) {
+            return HttpStatus.NOT_FOUND;
+        } else {
+            contactsRepository.deleteAll(contacts);
+            return HttpStatus.OK;
+        }
+    }
+
+    private List<Contact> convertToEntity(ContactsDto contactsDto) {
         List<Contact> contacts = new LinkedList<>();
 
         for (String phoneNumber : contactsDto.getPhones()) {
@@ -58,17 +89,5 @@ public class ContactsServiceImpl implements ContactsService {
                 .collect(Collectors.toList());
         String name = contacts.get(0).getName();
         return new ContactsDto(name, phones);
-    }
-
-    //TODO run some tests
-    @Override
-    public HttpStatus deleteContactByName(String contactName) {
-        List<Contact> contacts = contactsRepository.findByName(contactName);
-        if (contacts.size() == 0) {
-            return HttpStatus.NOT_FOUND;
-        } else {
-            contactsRepository.deleteAll(contacts);
-            return HttpStatus.OK;
-        }
     }
 }

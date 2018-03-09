@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,15 +20,16 @@ public class ContactsServiceImpl implements ContactsService {
 
     //TODO group by name
     @Override
-    public ContactsDto getAll() {
-        return convertToDto(contactsRepository.getAll());
+    public Optional<ContactsDto> getAll() {
+        List<Contact> contacts = contactsRepository.findAll();
+        return convertToDto(contactsRepository.findAll());
     }
 
     @Override
     public ContactsDto createContact(ContactsDto contactsDto) {
         List<Contact> contacts = convertToEntity(contactsDto);
         contacts = contactsRepository.saveAll(contacts);
-        return convertToDto(contacts);
+        return convertToDto(contacts).get();
     }
 
     @Override
@@ -58,7 +60,7 @@ public class ContactsServiceImpl implements ContactsService {
     @Override
     public ContactsDto getContactByName(String contactName) {
         List<Contact> contacts = contactsRepository.findByName(contactName);
-        return convertToDto(contacts);
+        return convertToDto(contacts).get();
     }
 
 
@@ -83,11 +85,15 @@ public class ContactsServiceImpl implements ContactsService {
         return contacts;
     }
 
-    private ContactsDto convertToDto(List<Contact> contacts) {
+    private Optional<ContactsDto> convertToDto(List<Contact> contacts) {
+        if (contacts.size() == 0) {
+            return Optional.empty();
+        }
         List<String> phones = contacts.stream()
                 .map(Contact::getPhoneNumber)
                 .collect(Collectors.toList());
+
         String name = contacts.get(0).getName();
-        return new ContactsDto(name, phones);
+        return Optional.of(new ContactsDto(name, phones));
     }
 }

@@ -3,9 +3,11 @@ package com.service;
 import com.dto.ContactsDto;
 import org.springframework.http.HttpStatus;
 
+import java.util.Optional;
+
 public interface ContactsService {
 
-    ContactsDto getAll();
+    Optional<ContactsDto> getAll();
 
     ContactsDto createContact(ContactsDto contacts);
 

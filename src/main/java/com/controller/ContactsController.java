@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/contacts")
 public class ContactsController {
@@ -20,8 +22,11 @@ public class ContactsController {
     }
 
     @GetMapping
-    public ContactsDto getAllContacts() {
-        return contactsService.getAll();
+    public ResponseEntity<?> getAllContacts() {
+        Optional<ContactsDto> contactsDto = contactsService.getAll();
+        if (contactsDto.isPresent()) {
+            return ResponseEntity.ok(contactsDto.get());
+        } else return ResponseEntity.ok("No contacts found");
     }
 
     @GetMapping("/{contactName}")

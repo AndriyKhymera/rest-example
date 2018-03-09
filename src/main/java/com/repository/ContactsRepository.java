@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface ContactsRepository extends JpaRepository<Contact, Integer> {
 
-    List<Contact> getAll();
-
     List<Contact> findByName(String name);
 
 }

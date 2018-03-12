@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,17 +23,24 @@ public class ContactsServiceImpl implements ContactsService {
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
-    //TODO group by name
     @Override
-    public Optional<ContactsDto> getAll() {
+    public List<ContactsDto> getAll() {
         List<Contact> contacts = contactsRepository.findAll();
-        return convertToDto(contacts);
+        Map<String, List<Contact>> groupedByName = contacts.stream()
+                .collect(Collectors.groupingBy(Contact::getName));
+
+        List<ContactsDto> contactsDtos = new LinkedList<>();
+
+        for (String contactName : groupedByName.keySet()) {
+            contactsDtos.add(convertToDto(groupedByName.get(contactName)).get());
+        }
+        return contactsDtos;
     }
 
     @Override
     public ContactsDto createContact(ContactsDto contactsDto) {
         List<Contact> contacts = convertToEntity(contactsDto);
-        log.info("Saving list" + contacts);
+        log.info("SAVE: contacts: " + contacts);
         contacts = contactsRepository.saveAll(contacts);
         return convertToDto(contacts).get();
     }
@@ -56,7 +64,10 @@ public class ContactsServiceImpl implements ContactsService {
         //contacts to remove
         currentContacts.removeAll(retainList);
 
+        log.info("SAVE: contacts " + newContactsList);
         contactsRepository.saveAll(newContactsList);
+
+        log.info("DELETE: contacts" + currentContacts);
         contactsRepository.deleteAll(currentContacts);
 
         return HttpStatus.OK;
@@ -76,6 +87,7 @@ public class ContactsServiceImpl implements ContactsService {
         if (contacts == null) {
             return HttpStatus.NOT_FOUND;
         } else {
+            log.info("DELETE: " + contacts);
             contactsRepository.deleteAll(contacts);
             return HttpStatus.OK;
         }
@@ -94,6 +106,7 @@ public class ContactsServiceImpl implements ContactsService {
         if (contacts.size() == 0) {
             return Optional.empty();
         }
+
         List<String> phones = contacts.stream()
                 .map(Contact::getPhoneNumber)
                 .collect(Collectors.toList());

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -22,16 +23,16 @@ public class ContactsController {
 
     @PostMapping
     public ContactsDto createContact(@RequestBody ContactsDto contact) {
-        log.info("Recieved entity" + contact);
         return contactsService.createContact(contact);
     }
 
     @GetMapping
     public ResponseEntity<?> getAllContacts() {
-        Optional<ContactsDto> contactsDto = contactsService.getAll();
-        if (contactsDto.isPresent()) {
-            return ResponseEntity.ok(contactsDto.get());
-        } else return ResponseEntity.ok("No contacts found");
+        List<ContactsDto> contactsDto = contactsService.getAll();
+//        if (contactsDto.isPresent()) {
+//            return ResponseEntity.ok(contactsDto.get());
+//        } else return ResponseEntity.ok("No contacts found");
+        return ResponseEntity.ok(contactsDto);
     }
 
     @GetMapping("/{contactName}")
